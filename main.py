@@ -13,10 +13,14 @@ import os
 import torch
 from torchvision import transforms
 import utils.utils as utils
+import pandas as pd
 
-from data_definition.MNISTDataset import MNISTDatasetTrain, NormalizeAndToTensorTrain, split_train_val_partition
+from data_definition.MNISTDataset import MNISTDatasetTrain, NormalizeAndToTensorTrain
+from data_definition.MNISTDataset import split_train_val_partition
+from data_definition.MNISTDataset import MNISTDatasetTest, NormalizeAndToTensorTest
 from torch.utils.data import DataLoader
 from training.CNN_train import train_wraper
+from evaluation.CNN_eval import evaluate_no_labels
 
 def main(config_file):
     """Gets and prints the spreadsheet's header columns
@@ -56,9 +60,13 @@ def main(config_file):
                            transform=transforms.Compose([NormalizeAndToTensorTrain()]))
     #Train and Validation partitions
     train, val = split_train_val_partition(dataset, config.data['split_train_percentage'])
+    #Test partition
+    test = MNISTDatasetTest(csv_file=config.data['test_file'],
+                           transform=transforms.Compose([NormalizeAndToTensorTest()]))
     
-    train_dataloader = DataLoader(train, batch_size=config.CNN_train['batch_size'], shuffle=True, num_workers=0)
-    val_dataloader = DataLoader(val, batch_size=config.CNN_train['batch_size'], shuffle=True, num_workers=0)
+    train_dataloader = DataLoader(train, batch_size=config.CNN_train['batch_size'], shuffle=True, num_workers=config.CNN_train['num_workers'])
+    val_dataloader   = DataLoader(val, batch_size=config.CNN_train['batch_size'], shuffle=True, num_workers=config.CNN_train['num_workers'])
+    test_dataloader  = DataLoader(test, batch_size=config.CNN_train['batch_size'], shuffle=False, num_workers=config.CNN_train['num_workers'])
     
     logging.info("- done.")
             
@@ -67,6 +75,19 @@ def main(config_file):
     train_wraper(train_dataloader, val_dataloader, config)
     logging.info("- done.")
     
+    #Evaluate the model
+    logging.info("Starting the model evaluation for Kaggle's test data")
+    eval_out = evaluate_no_labels(test_dataloader, config)
+    logging.info("- done.")
+    #Save the results
+    logging.info("Saving Kaggle's test data results")
+    eval_out.to_csv(os.path.join(out_dir, 'test_result.csv'),index=False)
+    #Save results in Kaggle mode
+    kaggle_format = pd.DataFrame([])
+    kaggle_format['ImageId'] = eval_out.index.values
+    kaggle_format['Label'] = eval_out.iloc[:,0]
+    kaggle_format.to_csv(os.path.join(out_dir, 'test_result_kaggle.csv'),index=False)
+    logging.info("- done.")
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Arguments of trainig model module')

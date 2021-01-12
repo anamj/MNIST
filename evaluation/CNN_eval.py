@@ -6,8 +6,14 @@ Created on Mon Jan 11 17:23:42 2021
 MNIST dataset challenge - pytoch model evaluation.
 Evaluates the model
 """
+import os
 
 import torch
+import pandas as pd
+from tqdm import tqdm
+
+import utils.utils as utils
+import model_definition.CNN_def as net
 
 def evaluate_with_labels(model, loss_fn, dataloader, config):
     """Evaluate the model on given a database with known true labels.
@@ -63,3 +69,62 @@ def evaluate_with_labels(model, loss_fn, dataloader, config):
     metrics_sumary = {'accuracy':accuracy_total,'loss':loss_total}
     
     return metrics_sumary
+
+def evaluate_no_labels(dataloader, config):
+    """Evaluate the model on given a database with no true labels. Returns the
+       predicted outputs
+    
+    Args:
+        dataloader (torch.utils.data.DataLoader): Points at the evaluation data
+        config: Experiment configuration
+    
+    Returns:
+        predicted (DataFrame): With two columns (data,labels (predicted))
+    """
+    
+    # Define the model
+    model = net.CNNnet(config.CNN_def).cuda() if config.cuda else net.CNNnet(config.CNN_def)
+    # Load trained model
+    model_path = os.path.join(config.general['out_dir'],'best_model')
+    utils.load_checkpoint(model_path, model)
+
+    # set model to evaluation mode
+    model.eval()
+
+    # summary for current eval loop
+    out = pd.DataFrame([])
+
+    # Use tqdm for progress bar
+    with tqdm(total=len(dataloader)) as t:
+        # compute metrics over the dataset
+        for data_batch in dataloader:
+            inputs_batch = data_batch['image'].type(torch.float32)
+    
+            # move to GPU if available
+            if config.cuda:
+                inputs_batch = inputs_batch.cuda(
+                    non_blocking=True)
+    
+            # compute model output
+            output_batch = model(inputs_batch)
+            
+            #Accumulate correct/incorrect outputs for accuracy
+            _, predicted_batch = torch.max(output_batch.data, 1)
+            
+            #To numpy and to pandas
+            #Saving all the data - takes up way more time
+            # data             = inputs_batch.numpy().reshape(config.CNN_train['batch_size'],inputs_batch.size()[-1]*inputs_batch.size()[-1])
+            # predict_label    = predicted_batch.numpy().reshape(config.CNN_train['batch_size'],1)
+            # data_dF          = pd.DataFrame(data)
+            # predict_label_dF = pd.DataFrame(predict_label)
+            # combine_dF       = pd.concat([predict_label_dF,data_dF],axis=1)
+            # out              = out.append(combine_dF,ignore_index=True)
+            
+            #Only saving predicted labels
+            predict_label    = predicted_batch.numpy().reshape(config.CNN_train['batch_size'],1)
+            predict_label_dF = pd.DataFrame(predict_label)
+            out              = out.append(predict_label_dF,ignore_index=True)
+            
+            t.update()
+    
+    return out

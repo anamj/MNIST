@@ -84,7 +84,7 @@ def main(config_file):
     eval_out.to_csv(os.path.join(out_dir, 'test_result.csv'),index=False)
     #Save results in Kaggle mode
     kaggle_format = pd.DataFrame([])
-    kaggle_format['ImageId'] = eval_out.index.values
+    kaggle_format['ImageId'] = eval_out.index.values+1
     kaggle_format['Label'] = eval_out.iloc[:,0]
     kaggle_format.to_csv(os.path.join(out_dir, 'test_result_kaggle.csv'),index=False)
     logging.info("- done.")

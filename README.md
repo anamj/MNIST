@@ -4,15 +4,16 @@ INTRODUCTION
 ##############################################################################
 
 This code is a framework for running experiments using the MNIST digit database with
-digits from [0-9]. The goal is to a framework where different models can be quickly 
+digits from [0-9]. The goal is to have a framework where different models can be quickly 
 evaluated and compared (for the moment only a CNN has been implemented).
 
-The goal of this task to predict the digits in each image. This database was obtaiend though
-http://yann.lecun.com/exdb/mnist/
+The goal of this task is to predict the digits in each image. The complete database 
+can be obtained here http://yann.lecun.com/exdb/mnist/. For our case, the database
+provided by Kaggle has been used, so as to participate in the competition.
 
 The database consists on:
-    - Training data : 60000 sample of labelled digits
-    - Test data     : 10000 sample of labelled digits. 
+    - Training data : 42000 sample of labelled digits
+    - Test data     : 28000 sample of labelled digits. 
 
 ##############################################################################
 CODE STRUCTURE
@@ -22,7 +23,7 @@ CODE STRUCTURE
     |   |
     |   |-- default_config.json
     |   |
-    |   |-- environment.yml : Python environemnt 
+    |   |-- environment.yml : Python environment(NEXT!)
     |
     |
     |-- data_definition: Folder (python package) where the data loader is defined
@@ -50,7 +51,7 @@ CODE STRUCTURE
     |   |--utils.py 
     |
     |
-    |-- visualization: Folder with general visualization functions and metrics (NEXT)
+    |-- visualization: Folder with general visualization functions and metrics (NEXT!)
     |
     |
     |-- main.py: Main script where experiments are launched from

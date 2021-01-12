@@ -85,10 +85,11 @@ def set_logger(log_file):
     if logger.handlers:
         remove_handler = True
         for h in range(len(logger.handlers)):
-            handler_name = logger.handlers[h].baseFilename
-            if handler_name == log_file:
-                remove_handler = False
-    
+            if logger.handlers[h].__class__.__name__ == 'FileHandler':
+                handler_name = logger.handlers[h].baseFilename
+                if handler_name == log_file:
+                    remove_handler = False
+                    
         if remove_handler:
             logger.handlers = []
 

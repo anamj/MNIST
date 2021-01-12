@@ -1,0 +1,43 @@
+{
+    "general":{
+        "seed" : 20,
+        "out_dir": "C:\\Users\\Ana\\Documents\\Projects\\MNIST\\results\\experiment2",
+        "pre_model": ""
+    },
+    
+    "data":{
+        "train_file": "C:\\Users\\Ana\\Documents\\Projects\\MNIST\\data\\train\\train.csv",
+        "test_file": "C:\\Users\\Ana\\Documents\\Projects\\MNIST\\data\\test\\test.csv",
+        "split_train_percentage" : 0.7
+    },
+    
+    "CNN_def":{
+        "image_size": 28,
+        
+        "conv1out": 6,
+        "conv1kernel": 3,
+        "conv1stride": 1,
+        "conv1pad": 0,
+        
+        "conv2out": 16,
+        "conv2kernel": 3,
+        "conv2stride": 1,
+        "conv2pad": 0,
+        
+        "maxpoolkernel": 2,
+        
+        "fc1out": 120,
+        "fc2out": 84
+    },
+    
+    "CNN_train":{
+        "batch_size": 4,
+        "learning_rate": 0.001,
+        "momentum": 0.9,
+        
+        "num_epochs": 2,
+    
+        "save_summary_steps": 100,
+        "num_workers": 4
+    }
+}

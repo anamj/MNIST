@@ -137,7 +137,7 @@ class NormalizeAndToTensorTest(object):
     def __call__(self, sample):
         image = sample['image']
 
-        return {'image': torch.from_numpy(image)}
+        return {'image': torch.from_numpy(image/255)}
 
 def split_train_val_partition(dataset, split_train_percentage):
     

@@ -10,8 +10,8 @@ can be obtained here http://yann.lecun.com/exdb/mnist/. For our case, the databa
 provided by Kaggle has been used, so as to participate in the competition.
 
 The database consists on:
-    - Training data : 42000 samples of labelled digits
-    - Test data     : 28000 samples of unlabelled digits. 
+- Training data : 42000 samples of labelled digits
+- Test data     : 28000 samples of unlabelled digits. 
 
 ## CODE STRUCTURE
 

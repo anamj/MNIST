@@ -15,7 +15,7 @@ from tqdm import tqdm
 import utils.utils as utils
 import model_definition.CNN_def as net
 
-def evaluate_with_labels(model, loss_fn, dataloader, config):
+def validate(model, loss_fn, dataloader, config):
     """Evaluate the model on given a database with known true labels.
     
     Args:
@@ -70,7 +70,7 @@ def evaluate_with_labels(model, loss_fn, dataloader, config):
     
     return metrics_sumary
 
-def evaluate_no_labels(dataloader, config):
+def evaluate_return_labels(dataloader, config):
     """Evaluate the model on given a database with no true labels. Returns the
        predicted outputs
     
@@ -79,7 +79,9 @@ def evaluate_no_labels(dataloader, config):
         config: Experiment configuration
     
     Returns:
-        predicted (DataFrame): With two columns (data,labels (predicted))
+        out (DataFrame): With three columns ('ImageId', 'Label'(predicted),'TrueLabel') if
+            true label is available in dataloader. Otherwise returns only two columns
+            ('ImageId', 'Label'(predicted))
     """
     
     # Define the model
@@ -120,11 +122,25 @@ def evaluate_no_labels(dataloader, config):
             # combine_dF       = pd.concat([predict_label_dF,data_dF],axis=1)
             # out              = out.append(combine_dF,ignore_index=True)
             
-            #Only saving predicted labels
-            predict_label    = predicted_batch.numpy().reshape(config.CNN_train['batch_size'],1)
-            predict_label_dF = pd.DataFrame(predict_label)
-            out              = out.append(predict_label_dF,ignore_index=True)
+            #Only saving predicted output and labels (if exist)
+            if 'labels' in data_batch:
+                predict_label    = predicted_batch.numpy().reshape(config.CNN_train['batch_size'],1)
+                true_lable       = data_batch['labels'].numpy().reshape(config.CNN_train['batch_size'],1)
+                out              = out.append(pd.concat([pd.DataFrame(predict_label),pd.DataFrame(true_lable)],axis=1),ignore_index=True)
+            else:
+                predict_label    = predicted_batch.numpy().reshape(config.CNN_train['batch_size'],1)
+                out              = out.append(pd.DataFrame(predict_label),ignore_index=True)
             
             t.update()
+        
+        # Name columns and reorder for Kaggle's format
+        if out.shape[1] == 2:
+            out.columns = ['Label','TrueLabel']
+            out['ImageId'] = out.index.values+1
+            out = out[['ImageId','Label','TrueLabel']]
+        else:
+            out.columns = ['Label']
+            out['ImageId'] = out.index.values+1
+            out = out[['ImageId','Label']]
     
     return out

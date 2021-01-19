@@ -15,7 +15,7 @@ from tqdm import tqdm
 import utils.utils as utils
 
 import model_definition.CNN_def as net
-from evaluation.CNN_eval import evaluate_with_labels
+from evaluation.CNN_eval import validate
 
 
 def train(model, optimizer, loss_fn, dataloader, config):
@@ -123,7 +123,7 @@ def train_wraper(train_dataloader, val_dataloader, config):
         train(model, optimizer, loss_fn, train_dataloader, config)
 
         # Evaluate for each epoch on validation set
-        val_metrics = evaluate_with_labels(model, loss_fn, val_dataloader, config)
+        val_metrics = validate(model, loss_fn, val_dataloader, config)
         
         metrics_string = " ; ".join("{}: {:05.3f}".format(k, v)
                                 for k, v in val_metrics.items())

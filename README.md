@@ -21,15 +21,16 @@ The database consists on:
     │   ├── environment.yml        # Python environment(NEXT!)
     │
     │
-    ├── data_definition            # Folder (python package) where the data loader is defined
+    ├── data                       # Folder (python package) where the data realted functions are defined
     │   │
-    │   ├── MNISTDataset.py     
+    │   ├── MNISTDataset.py
+    │   ├── data_exploration.py     
     │
     ├── evaluation                 # Folder (python package) where the evaluation functions are defined
     │   │
     │   ├── CNN_eval.py
     │
-    ├── model_definition           # Folder (python package) with the model definitions
+    ├── model                      # Folder (python package) with the model definitions
     │   │
     │   ├── CNN_def.py             # CNN definition
     │
@@ -44,8 +45,12 @@ The database consists on:
     ├── visualization              # Folder with general visualization functions and metrics
     │   │
     │   ├── metrics.py
+    │   ├── data_plots.py
     │
-    └── main.py                    # Main script where experiments are launched from
+    ├── .gitignore                 # For ignoring pycache during commits
+    ├── main_explore_data.py       # Main script for exploring the data
+    ├── main.py                    # Main script where experiments are launched from
+    └── README.md                  # This file
     
     
     

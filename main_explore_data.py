@@ -10,7 +10,7 @@ import argparse
 import os
 
 import utils.utils as utils
-from data_definition.data_exploration import read_data, check_null, check_type, check_range, check_balance
+from data.data_exploration import read_data, check_null, check_type, check_range, check_balance
 from visualization.data_plots import plot_data
 
 def main(config_file):

@@ -10,7 +10,6 @@
         "test_file": "C:\\Users\\Ana\\Documents\\Projects\\MNIST\\data\\test\\test.csv",
         "split_train_percentage" : 0.7   
     },
-    
         
     "data_exploration":{
         "data_to_explore": "C:\\Users\\Ana\\Documents\\Projects\\MNIST\\data\\train\\train.csv",

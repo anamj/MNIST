@@ -15,16 +15,17 @@ from torchvision import transforms
 import utils.utils as utils
 import pandas as pd
 
-from data_definition.MNISTDataset import MNISTDatasetTrain, NormalizeAndToTensorTrain
-from data_definition.MNISTDataset import split_train_val_partition
-from data_definition.MNISTDataset import MNISTDatasetTest, NormalizeAndToTensorTest
+from data.MNISTDataset import MNISTDatasetTrain, NormalizeAndToTensorTrain
+from data.MNISTDataset import split_train_val_partition
+from data.MNISTDataset import MNISTDatasetTest, NormalizeAndToTensorTest
 from torch.utils.data import DataLoader
 from training.CNN_train import train_wraper
 from evaluation.CNN_eval import evaluate_return_labels
 from visualization.metrics import accuracy, accuracy_per_class, confusion_matrix, confusion_matrix_metrics
 
 def main(config_file):
-    """Gets and prints the spreadsheet's header columns
+    """ Main script used for executing experiments (training,evaluating and 
+        comparing the models)
 
     Args:
         config_file (str): The file location of the json configuration file
@@ -107,7 +108,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Arguments of trainig model module')
     
     parser.add_argument('--config_file', dest='config_file',
-                        default=r"C:\Users\Ana\Documents\Projects\MNIST\code\config\default_config.json",
+                        default=r"C:\Users\Ana\Documents\Projects\MNIST\code\config\pruebas_config.json",
                         help='Configuration file')
 
     args = parser.parse_args()

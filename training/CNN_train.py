@@ -14,7 +14,7 @@ import torch.optim as optim
 from tqdm import tqdm
 import utils.utils as utils
 
-import model_definition.CNN_def as net
+import model.CNN_def as net
 from evaluation.CNN_eval import validate
 
 

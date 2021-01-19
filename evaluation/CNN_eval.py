@@ -13,7 +13,7 @@ import pandas as pd
 from tqdm import tqdm
 
 import utils.utils as utils
-import model_definition.CNN_def as net
+import model.CNN_def as net
 
 def validate(model, loss_fn, dataloader, config):
     """Evaluate the model on given a database with known true labels.

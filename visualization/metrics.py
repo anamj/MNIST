@@ -2,7 +2,8 @@
 """
 Created on Fri Jan 15 15:05:01 2021
 
-MEtrics definition
+@author: Ana Mantecon
+Metrics definition
 """
 
 import pandas as pd

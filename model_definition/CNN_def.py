@@ -2,7 +2,7 @@
 """
 Created on Tue Dec 22 15:44:48 2020
 
-@author: ana.mantecon.jene@gmail.com
+@author: Ana Mantecon
 MNIST dataset challenge - pytoch network CNN definition
 """
 import torch

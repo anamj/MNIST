@@ -2,7 +2,7 @@
 """
 Created on Mon Jan 11 18:51:46 2021
 
-@author: ana.mantecon.jene@gmail.com
+@author: Ana Mantecon
 MNIST dataset challenge - main function. Use this function to run your experiments.
 Configure your own experiments following the default template in config\default_config.json
 """

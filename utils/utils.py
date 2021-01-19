@@ -2,7 +2,7 @@
 """
 Created on Mon Jan 11 18:48:27 2021
 
-@author: ana.mantecon.jene@gmail.com
+@author: Ana Mantecon
 Original file modified from https://github.com/cs230-stanford/cs230-code-examples/blob/master/pytorch/vision/utils.py
 """
 import json

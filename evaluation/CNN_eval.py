@@ -2,7 +2,7 @@
 """
 Created on Mon Jan 11 17:23:42 2021
 
-@author: ana.mantecon.jene@gmail.com
+@author: Ana Mantecon
 MNIST dataset challenge - pytoch model evaluation.
 Evaluates the model
 """

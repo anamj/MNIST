@@ -1,7 +1,7 @@
 """
 Created on Tue Dec 22 18:18:28 2020
 
-@author: ana.mantecon.jene@gmail.com
+@author: Ana Mantecon
 MNIST dataset challenge - CNN training
 """
 

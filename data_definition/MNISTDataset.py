@@ -2,7 +2,7 @@
 """
 Created on Tue Dec 22 20:40:56 2020
 
-@author: ana.mantecon.jene@gmail.com
+@author: Ana Mantecon
 MNIST Dataset data loading functions
 """
 

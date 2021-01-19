@@ -20,7 +20,8 @@ from data_definition.MNISTDataset import split_train_val_partition
 from data_definition.MNISTDataset import MNISTDatasetTest, NormalizeAndToTensorTest
 from torch.utils.data import DataLoader
 from training.CNN_train import train_wraper
-from evaluation.CNN_eval import evaluate_no_labels
+from evaluation.CNN_eval import evaluate_return_labels
+from visualization.metrics import accuracy, accuracy_per_class, confusion_matrix, confusion_matrix_metrics
 
 def main(config_file):
     """Gets and prints the spreadsheet's header columns
@@ -75,19 +76,32 @@ def main(config_file):
     train_wraper(train_dataloader, val_dataloader, config)
     logging.info("- done.")
     
-    #Evaluate the model
-    logging.info("Starting the model evaluation for Kaggle's test data")
-    eval_out = evaluate_no_labels(test_dataloader, config)
+    #Evaluate the model test set (can have true labels or not (Kaggle's case))
+    logging.info("Starting the model evaluation test data")
+    eval_out = evaluate_return_labels(test_dataloader, config)
     logging.info("- done.")
     #Save the results
-    logging.info("Saving Kaggle's test data results")
+    logging.info("Saving test data results")
     eval_out.to_csv(os.path.join(out_dir, 'test_result.csv'),index=False)
-    #Save results in Kaggle mode
-    kaggle_format = pd.DataFrame([])
-    kaggle_format['ImageId'] = eval_out.index.values+1
-    kaggle_format['Label'] = eval_out.iloc[:,0]
-    kaggle_format.to_csv(os.path.join(out_dir, 'test_result_kaggle.csv'),index=False)
     logging.info("- done.")
+    
+    # Compute metrics
+    if 'TrueLabel' in eval_out:
+        #Evaluate the model with test set (known labels)
+        logging.info("Calculating final metrics")
+        # Get unique true labels in dataset
+        classes = eval_out.TrueLabel.unique()
+        # Sort them
+        classes.sort()
+        # Calculate accuracy
+        accuracy_total = accuracy(eval_out)
+        # Calculate accuracy per class
+        accuracy_class = accuracy_per_class(eval_out, classes)
+        # Confussion matrix
+        c_matrix       = confusion_matrix(eval_out, classes)
+        # Overall metrics
+        metrics_per_class, metrics_overall = confusion_matrix_metrics(c_matrix)
+        logging.info("- done.")   
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Arguments of trainig model module')

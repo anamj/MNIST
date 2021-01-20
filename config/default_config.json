@@ -42,6 +42,7 @@
         "momentum": 0.9,
         
         "num_epochs": 20,
+        "early_stop_epoch":10,
     
         "save_summary_steps": 100,
         "num_workers": 0

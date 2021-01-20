@@ -13,11 +13,13 @@ import torch.nn as nn
 import torch.optim as optim
 from tqdm import tqdm
 import utils.utils as utils
+from model.EarlyStopping import EarlyStopping
 
 import model.CNN_def as net
 from model.CNN_def import init_weights
 from evaluation.CNN_eval import validate
 from visualization.performance_plots import plot_train_val
+
 
 
 def train(model, optimizer, loss_fn, dataloader, config):
@@ -119,14 +121,17 @@ def train_wraper(train_dataloader, val_dataloader, config):
         restore_path = os.path.join(config.general['pre_model'] + '.pth.tar')
         logging.info("Pre loading model parameters from {}".format(restore_path))
         utils.load_checkpoint(restore_path, model, optimizer)
+    
+    # initialize the early_stopping object
+    early_stopping = EarlyStopping(patience=config.CNN_train['early_stop_epoch'], verbose=True)
 
     best_val = 0.0
     
     # Save loss and accuracy
-    train_loss = list(0. for i in range(config.CNN_train['num_epochs']))
-    val_loss   = list(0. for i in range(config.CNN_train['num_epochs']))
-    train_acc  = list(0. for i in range(config.CNN_train['num_epochs']))
-    val_acc    = list(0. for i in range(config.CNN_train['num_epochs']))
+    train_loss = list('nan' for i in range(config.CNN_train['num_epochs']))
+    val_loss   = list('nan' for i in range(config.CNN_train['num_epochs']))
+    train_acc  = list('nan' for i in range(config.CNN_train['num_epochs']))
+    val_acc    = list('nan' for i in range(config.CNN_train['num_epochs']))
 
     for epoch in range(config.CNN_train['num_epochs']):
         # Run one epoch
@@ -161,7 +166,19 @@ def train_wraper(train_dataloader, val_dataloader, config):
         # If best_eval, update best_val
         if is_best:
             logging.info("- Found new best accuracy")
-            best_val = val_acc
+            best_val = val_acc[epoch]
+        
+        # early_stopping - uses validation loss to check if it has decresed
+        early_stopping(val_loss[epoch], model)
+        
+        if early_stopping.early_stop:
+            logging.info("Early stopping")
+            #Reshape acc and loss
+            train_loss = list(filter(lambda a: a != 'nan', train_loss))
+            val_loss   = list(filter(lambda a: a != 'nan', val_loss))
+            train_acc  = list(filter(lambda a: a != 'nan', train_acc))
+            val_acc    = list(filter(lambda a: a != 'nan', val_acc))
+            break
     
     if config.CNN_train['num_epochs'] > 0:
         #Plot training vs validaton performance per epoch

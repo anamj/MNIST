@@ -32,7 +32,8 @@ def plot_train_val(train_metric, val_metric, save_dir, metric_name, model_name, 
     plt.plot(num_epoch,val_metric,'o-')
     plt.legend(labels=('training','validation'))
     plt.xlabel('Epoch number')
-    plt.xticks(np.arange(min(num_epoch), max(num_epoch)+1, 1.0))
+    #plt.xticks(np.arange(min(num_epoch), max(num_epoch)+1, 1.0))
+    plt.xlim(0, max(num_epoch)+1) # consistent scale
     plt.ylabel(metric_name)
     plt.title(model_name+' training performance') 
     plt.grid()

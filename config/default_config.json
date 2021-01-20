@@ -37,11 +37,12 @@
     },
     
     "CNN_train":{
+        "enable_custom_weight_init": 0,
         "batch_size": 4,
         "learning_rate": 0.001,
         "momentum": 0.9,
         
-        "num_epochs": 20,
+        "num_epochs": 100,
         "early_stop_epoch":10,
     
         "save_summary_steps": 100,

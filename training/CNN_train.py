@@ -108,7 +108,8 @@ def train_wraper(train_dataloader, val_dataloader, config):
     optimizer = optim.SGD(model.parameters(), lr=config.CNN_train['learning_rate'], momentum=config.CNN_train['momentum'])
     
     #Initialize model weights
-    model.apply(init_weights)
+    if config.CNN_train['enable_custom_weight_init']:
+        model.apply(init_weights)
     
     # Loss function
     loss_fn = nn.CrossEntropyLoss() #net.loss_fn

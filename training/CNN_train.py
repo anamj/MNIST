@@ -16,6 +16,7 @@ import utils.utils as utils
 
 import model.CNN_def as net
 from evaluation.CNN_eval import validate
+from visualization.performance_plots import plot_train_val
 
 
 def train(model, optimizer, loss_fn, dataloader, config):
@@ -86,6 +87,8 @@ def train(model, optimizer, loss_fn, dataloader, config):
     metrics_string = " ; ".join("{}: {:05.3f}".format(k, v)
                                 for k, v in metrics_sumary.items())
     logging.info("- Train metrics : " + metrics_string)
+    
+    return metrics_sumary
 
 def train_wraper(train_dataloader, val_dataloader, config):
     """ Defines the model and performs the training calling to the train function for the
@@ -114,13 +117,19 @@ def train_wraper(train_dataloader, val_dataloader, config):
         utils.load_checkpoint(restore_path, model, optimizer)
 
     best_val = 0.0
+    
+    # Save loss and accuracy
+    train_loss = list(0. for i in range(config.CNN_train['num_epochs']))
+    val_loss   = list(0. for i in range(config.CNN_train['num_epochs']))
+    train_acc  = list(0. for i in range(config.CNN_train['num_epochs']))
+    val_acc    = list(0. for i in range(config.CNN_train['num_epochs']))
 
     for epoch in range(config.CNN_train['num_epochs']):
         # Run one epoch
         logging.info("Epoch {}/{}".format(epoch + 1, config.CNN_train['num_epochs']))
 
         # compute number of batches in one epoch (one full pass over the training set)
-        train(model, optimizer, loss_fn, train_dataloader, config)
+        train_metrics=train(model, optimizer, loss_fn, train_dataloader, config)
 
         # Evaluate for each epoch on validation set
         val_metrics = validate(model, loss_fn, val_dataloader, config)
@@ -128,9 +137,15 @@ def train_wraper(train_dataloader, val_dataloader, config):
         metrics_string = " ; ".join("{}: {:05.3f}".format(k, v)
                                 for k, v in val_metrics.items())
         logging.info("- Validation metrics : " + metrics_string)
-
-        val_acc = val_metrics['accuracy']
-        is_best = val_acc >= best_val
+        
+        # Update loss and accuracy lists
+        train_loss[epoch] = train_metrics['loss']
+        val_loss[epoch]   = val_metrics['loss']
+        train_acc[epoch]  = train_metrics['accuracy']
+        val_acc[epoch]    = val_metrics['accuracy']
+    
+        #Update is_best accordingly to new val_acc
+        is_best = val_acc[epoch] >= best_val
 
         # Save weights
         utils.save_checkpoint({'epoch': epoch + 1,
@@ -143,3 +158,7 @@ def train_wraper(train_dataloader, val_dataloader, config):
         if is_best:
             logging.info("- Found new best accuracy")
             best_val = val_acc
+    
+    #Plot training vs validaton performance per epoch
+    plot_train_val(train_loss, val_loss, out_dir, 'loss','CNN')
+    plot_train_val(train_acc, val_acc, out_dir, 'accuracy','CNN')

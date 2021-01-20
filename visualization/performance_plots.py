@@ -5,10 +5,10 @@ Created on Wed Jan 20 12:55:41 2021
 @author: Ana Mantecon
 Performance plots
 """
-
+import os
 import matplotlib.pyplot as plt
 import numpy as np
-import os
+import seaborn as sns
 
 def plot_train_val(train_metric, val_metric, save_dir, metric_name, model_name, text_points=False):
     """ Plots training and validation performance metrics against the number of
@@ -65,6 +65,39 @@ def plot_train_val(train_metric, val_metric, save_dir, metric_name, model_name, 
 
     #Save figure
     filename = os.path.join(save_dir, model_name+'_train_performance_'+metric_name+'.png')
+    plt.savefig(filename,dpi=300)
+    
+    plt.show()
+    
+def plot_confusion_matrix(c_matrix, classes, model_name, save_dir):
+    """ Plots confusion matrix
+           
+        Args:
+            c_matrix (array): confusion matrix Size #classes x #classes
+            classes (array): output classes of the data
+            model_name (str): model name
+            save_dir (str): output directory where the figure will be saved
+    """
+
+    # Plot confusion matrix in a beautiful manner
+    plt.figure(figsize=(10, 6))
+    ax= plt.subplot()
+    sns.heatmap(c_matrix, annot=True, ax = ax, fmt = 'g', cmap='YlOrBr'); #annot=True to annotate cells
+    # labels, title and ticks
+    ax.set_xlabel('True Labels', fontsize=13)
+    ax.xaxis.set_label_position('top')
+    plt.xticks(rotation=0)
+    ax.xaxis.set_ticklabels(classes, fontsize = 10)
+    ax.xaxis.tick_top()
+    
+    ax.set_ylabel('Predicted Labels', fontsize=13)
+    ax.yaxis.set_ticklabels(classes, fontsize = 10)
+    plt.yticks(rotation=0)
+    
+    plt.title(model_name+' Confusion Matrix', fontsize=18)
+    
+    #Save figure
+    filename = os.path.join(save_dir, model_name+'_confusion_matrix.png')
     plt.savefig(filename,dpi=300)
     
     plt.show()

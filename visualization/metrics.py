@@ -92,7 +92,7 @@ def confusion_matrix(eval_out, classes):
             c_matrix (array): Confusion matrix Size #classes x #classes
     """
     
-    c_matrix = np.empty([10,10], dtype=object) 
+    c_matrix = np.empty([10,10], dtype=float) 
     
     for i in range(len(classes)):
         eval_class = eval_out[eval_out.TrueLabel == classes[i]]
@@ -125,21 +125,21 @@ def confusion_matrix_metrics(c_matrix):
                 results computed in three different ways 'micro', 'macro' and 'weighted'
     """
     
-    dataSamples = np.empty(10, dtype=object) 
+    dataSamples = np.empty(10, dtype=float) 
     
-    TP = np.empty(10, dtype=object) 
-    TN = np.empty(10, dtype=object) 
-    FP = np.empty(10, dtype=object) 
-    FN = np.empty(10, dtype=object) 
+    TP = np.empty(10, dtype=float) 
+    TN = np.empty(10, dtype=float) 
+    FP = np.empty(10, dtype=float) 
+    FN = np.empty(10, dtype=float) 
     
-    accuracy  = np.empty(10, dtype=object) 
-    miss      = np.empty(10, dtype=object) 
-    precision = np.empty(10, dtype=object) 
-    recall    = np.empty(10, dtype=object) 
-    TNR       = np.empty(10, dtype=object) 
-    FAR       = np.empty(10, dtype=object) 
-    FRR       = np.empty(10, dtype=object) 
-    F1_score  = np.empty(10, dtype=object) 
+    accuracy  = np.empty(10, dtype=float) 
+    miss      = np.empty(10, dtype=float) 
+    precision = np.empty(10, dtype=float) 
+    recall    = np.empty(10, dtype=float) 
+    TNR       = np.empty(10, dtype=float) 
+    FAR       = np.empty(10, dtype=float) 
+    FRR       = np.empty(10, dtype=float) 
+    F1_score  = np.empty(10, dtype=float) 
     
     for i in range(c_matrix.shape[0]):
         

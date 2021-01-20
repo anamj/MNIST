@@ -163,6 +163,7 @@ def train_wraper(train_dataloader, val_dataloader, config):
             logging.info("- Found new best accuracy")
             best_val = val_acc
     
-    #Plot training vs validaton performance per epoch
-    plot_train_val(train_loss, val_loss, out_dir, 'loss','CNN')
-    plot_train_val(train_acc, val_acc, out_dir, 'accuracy','CNN')
+    if config.CNN_train['num_epochs'] > 0:
+        #Plot training vs validaton performance per epoch
+        plot_train_val(train_loss, val_loss, out_dir, 'loss','CNN')
+        plot_train_val(train_acc, val_acc, out_dir, 'accuracy','CNN')

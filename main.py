@@ -13,7 +13,6 @@ import os
 import torch
 from torchvision import transforms
 import utils.utils as utils
-import pandas as pd
 
 from data.MNISTDataset import MNISTDatasetTrain, NormalizeAndToTensorTrain
 from data.MNISTDataset import split_train_val_partition
@@ -21,7 +20,8 @@ from data.MNISTDataset import MNISTDatasetTest, NormalizeAndToTensorTest
 from torch.utils.data import DataLoader
 from training.CNN_train import train_wraper
 from evaluation.CNN_eval import evaluate_return_labels
-from visualization.metrics import accuracy, error_rate, accuracy_per_class, confusion_matrix, confusion_matrix_metrics
+from visualization.metrics import accuracy, error_rate, confusion_matrix, confusion_matrix_metrics
+from visualization.performance_plots import plot_confusion_matrix
 
 def main(config_file):
     """ Main script used for executing experiments (training,evaluating and 
@@ -50,6 +50,9 @@ def main(config_file):
     out_dir = config.general['out_dir']
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
+    
+    #Save config file
+    config.save(os.path.join(out_dir, 'experiment_config.json'))
 
     # Set the logger
     utils.set_logger(os.path.join(out_dir, 'train.log'))
@@ -76,13 +79,19 @@ def main(config_file):
     logging.info("Starting training for {} epoch(s)".format(config.CNN_train['num_epochs']))
     train_wraper(train_dataloader, val_dataloader, config)
     logging.info("- done.")
-    
-    #Evaluate the model test set (can have true labels or not (Kaggle's case))
-    logging.info("Starting the model evaluation test data")
-    eval_out = evaluate_return_labels(test_dataloader, config)
-    logging.info("- done.")
+        
+    #Evaluate the model test set 
+    # Using Kaggle's test set unknown labels (can have true labels or not (Kaggle's case))
+    logging.info("Starting the model evaluation on Kaggle's test data")
+    eval_out_kaggle = evaluate_return_labels(test_dataloader, config)
     #Save the results
-    logging.info("Saving test data results")
+    eval_out_kaggle.to_csv(os.path.join(out_dir, 'test_result_kaggle.csv'),index=False)
+    logging.info("- done.")
+    
+    # Using test set with known labels
+    logging.info("Starting the model evaluation on test data")
+    eval_out = evaluate_return_labels(val_dataloader, config)
+    #Save the results
     eval_out.to_csv(os.path.join(out_dir, 'test_result.csv'),index=False)
     logging.info("- done.")
     
@@ -98,12 +107,17 @@ def main(config_file):
         accuracy_total = accuracy(eval_out)
         # Calculate error rate
         error_rate_total = error_rate(eval_out)
-        # Calculate accuracy per class
-        accuracy_class = accuracy_per_class(eval_out, classes)
         # Confussion matrix
         c_matrix       = confusion_matrix(eval_out, classes)
+        plot_confusion_matrix(c_matrix, classes, 'CNN', out_dir)
         # Overall metrics
         metrics_per_class, metrics_overall = confusion_matrix_metrics(c_matrix)
+        metrics_overall['accuracy_percent'] = accuracy_total
+        metrics_overall['error_rate_percent'] = error_rate_total
+        
+        metrics_per_class.to_csv(os.path.join(out_dir, 'CNN_results_per_class.csv'))
+        metrics_overall.to_csv(os.path.join(out_dir, 'CNN_results_overall.csv'))
+        
         logging.info("- done.")   
     
 if __name__ == "__main__":
@@ -115,3 +129,5 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     main(args.config_file)
+    
+

@@ -21,7 +21,7 @@ from data.MNISTDataset import MNISTDatasetTest, NormalizeAndToTensorTest
 from torch.utils.data import DataLoader
 from training.CNN_train import train_wraper
 from evaluation.CNN_eval import evaluate_return_labels
-from visualization.metrics import accuracy, accuracy_per_class, confusion_matrix, confusion_matrix_metrics
+from visualization.metrics import accuracy, error_rate, accuracy_per_class, confusion_matrix, confusion_matrix_metrics
 
 def main(config_file):
     """ Main script used for executing experiments (training,evaluating and 
@@ -96,6 +96,8 @@ def main(config_file):
         classes.sort()
         # Calculate accuracy
         accuracy_total = accuracy(eval_out)
+        # Calculate error rate
+        error_rate_total = error_rate(eval_out)
         # Calculate accuracy per class
         accuracy_class = accuracy_per_class(eval_out, classes)
         # Confussion matrix
@@ -108,7 +110,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Arguments of trainig model module')
     
     parser.add_argument('--config_file', dest='config_file',
-                        default=r"C:\Users\Ana\Documents\Projects\MNIST\code\config\pruebas_config.json",
+                        default=r"C:\Users\Ana\Documents\Projects\MNIST\code\config\default_config.json",
                         help='Configuration file')
 
     args = parser.parse_args()

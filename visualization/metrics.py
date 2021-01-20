@@ -28,6 +28,25 @@ def accuracy(eval_out):
     
     return accuracy
 
+def error_rate(eval_out):   
+    """ Computes the overall error rate of the model
+           
+        Args:
+            eval_out (DataFrame): With columns Label (predicted) and TrueLabel
+            
+        Returns:
+            error_rate (int): Overall accuracy of the model for the given data
+    """
+    
+    errors = (eval_out.TrueLabel != eval_out.Label).sum()
+    total   = eval_out.shape[0]
+    
+    error_rate = 100*errors/total
+    
+    print('Total Error Rate is '+'{0:.2f}%'.format(error_rate))
+    
+    return error_rate
+
     
 def accuracy_per_class(eval_out, classes):
     """ Computes the accuracy per class to get an overall idea of which classes

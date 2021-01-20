@@ -15,6 +15,7 @@ from tqdm import tqdm
 import utils.utils as utils
 
 import model.CNN_def as net
+from model.CNN_def import init_weights
 from evaluation.CNN_eval import validate
 from visualization.performance_plots import plot_train_val
 
@@ -103,7 +104,10 @@ def train_wraper(train_dataloader, val_dataloader, config):
     # Define the model and optimizer
     model = net.CNNnet(config.CNN_def).cuda() if config.cuda else net.CNNnet(config.CNN_def)
     optimizer = optim.SGD(model.parameters(), lr=config.CNN_train['learning_rate'], momentum=config.CNN_train['momentum'])
-
+    
+    #Initialize model weights
+    model.apply(init_weights)
+    
     # Loss function
     loss_fn = nn.CrossEntropyLoss() #net.loss_fn
     

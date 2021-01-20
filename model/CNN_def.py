@@ -134,6 +134,22 @@ class CNNnet(nn.Module):
         size = ((w-k+2*p)/s)+1
         return size
     
+def init_weights(m):
+        """Weights and bias initialization for each layer type
+        
+        Args:    
+            m: layer
+
+        """
+        if isinstance(m, nn.Conv2d):
+            nn.init.uniform_(m.weight,-0.5,0.5)
+            nn.init.uniform_(m.bias,-0.5,0.5)
+            
+        if isinstance(m, nn.Linear):
+            nn.init.uniform_(m.weight,-0.5,0.5)
+            nn.init.uniform_(m.bias,-0.5,0.5)
+
+    
 def loss_fn(outputs, labels):
     """Computes the cross entropy loss given outputs and labels.
         

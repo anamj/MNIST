@@ -14,9 +14,8 @@ import torch
 from torchvision import transforms
 import utils.utils as utils
 
-from data.MNISTDataset import MNISTDatasetTrain, NormalizeAndToTensorTrain
-from data.MNISTDataset import split_train_val_partition
-from data.MNISTDataset import MNISTDatasetTest, NormalizeAndToTensorTest
+from data.MNISTDataset import MNISTDatasetLabels, MNISTDatasetNoLabels, Normalization
+from data.MNISTDataset import read_and_format_full_dataset, read_and_format_kaggle_dataset, split_train_val_partition
 from torch.utils.data import DataLoader
 from training.CNN_train import train_wraper
 from evaluation.CNN_eval import evaluate_return_labels
@@ -61,18 +60,40 @@ def main(config_file):
     logging.info("Loading the datasets...")
 
     # Load data
-    dataset = MNISTDatasetTrain(csv_file=config.data['train_file'],
-                           transform=transforms.Compose([NormalizeAndToTensorTrain()]))
-    #Train and Validation partitions
-    train, val = split_train_val_partition(dataset, config.data['split_train_percentage'])
-    #Test partition
-    test = MNISTDatasetTest(csv_file=config.data['test_file'],
-                           transform=transforms.Compose([NormalizeAndToTensorTest()]))
+    train, test = read_and_format_full_dataset()
+    train_kaggle, test_kaggle = read_and_format_kaggle_dataset()
     
-    train_dataloader = DataLoader(train, batch_size=config.CNN_train['batch_size'], shuffle=True, num_workers=config.CNN_train['num_workers'])
-    val_dataloader   = DataLoader(val, batch_size=config.CNN_train['batch_size'], shuffle=True, num_workers=config.CNN_train['num_workers'])
-    test_dataloader  = DataLoader(test, batch_size=config.CNN_train['batch_size'], shuffle=False, num_workers=config.CNN_train['num_workers'])
+    #Using kaggle's training data for training
+    train, val = split_train_val_partition(train_kaggle, config.data['split_train_percentage'],config.general['seed'])
     
+    #Adding data augmentation to training
+    # train = MNISTDatasetLabels(train,
+    #                            transform=transforms.Compose([
+    #                                        Normalization(),
+    #                                        transforms.RandomHorizontalFlip(0.5),
+    #                                        transforms.RandomVerticalFlip(0.5),
+    #                                        transforms.RandomPerspective(),
+    #                                        transforms.RandomRotation(30)]))  
+    
+    train = MNISTDatasetLabels(train,
+                               transform=transforms.Compose([
+                                           Normalization(),
+                                           transforms.RandomRotation(15)])) 
+    
+    val = MNISTDatasetLabels(val,
+                           transform=transforms.Compose([Normalization()]))  
+    
+    test = MNISTDatasetLabels(test,
+                           transform=transforms.Compose([Normalization()]))  
+    
+    test_kaggle = MNISTDatasetNoLabels(test_kaggle,
+                           transform=transforms.Compose([Normalization()]))  
+    
+    train_dataloader       = DataLoader(train, batch_size=config.CNN_train['batch_size'], shuffle=True, num_workers=config.CNN_train['num_workers'])
+    val_dataloader         = DataLoader(val, batch_size=config.CNN_train['batch_size'], shuffle=True, num_workers=config.CNN_train['num_workers'])
+    test_dataloader        = DataLoader(test, batch_size=config.CNN_train['batch_size'], shuffle=False, num_workers=config.CNN_train['num_workers'])
+    test_kaggle_dataloader = DataLoader(test_kaggle, batch_size=config.CNN_train['batch_size'], shuffle=False, num_workers=config.CNN_train['num_workers'])
+
     logging.info("- done.")
             
     # Train the model
@@ -83,14 +104,14 @@ def main(config_file):
     #Evaluate the model test set 
     # Using Kaggle's test set unknown labels (can have true labels or not (Kaggle's case))
     logging.info("Starting the model evaluation on Kaggle's test data")
-    eval_out_kaggle = evaluate_return_labels(test_dataloader, config)
+    eval_out_kaggle = evaluate_return_labels(test_kaggle_dataloader, config)
     #Save the results
     eval_out_kaggle.to_csv(os.path.join(out_dir, 'test_result_kaggle.csv'),index=False)
     logging.info("- done.")
     
     # Using test set with known labels
     logging.info("Starting the model evaluation on test data")
-    eval_out = evaluate_return_labels(val_dataloader, config)
+    eval_out = evaluate_return_labels(test_dataloader, config)
     #Save the results
     eval_out.to_csv(os.path.join(out_dir, 'test_result.csv'),index=False)
     logging.info("- done.")

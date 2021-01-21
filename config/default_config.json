@@ -6,8 +6,6 @@
     },
     
     "data":{
-        "train_file": "C:\\Users\\Ana\\Documents\\Projects\\MNIST\\data\\train\\train.csv",
-        "test_file": "C:\\Users\\Ana\\Documents\\Projects\\MNIST\\data\\test\\test.csv",
         "split_train_percentage" : 0.7   
     },
         

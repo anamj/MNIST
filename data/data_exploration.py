@@ -7,7 +7,6 @@ Functions for exploring the data
 """
 import pandas as pd
 import math
-from sklearn.model_selection import train_test_split
 from visualization.data_plots import plot_balance
 
 def read_data(input_data):
@@ -26,24 +25,6 @@ def read_data(input_data):
     print("Each image has size " + str(math.sqrt(data.shape[1]-1))+"x"+str(math.sqrt(data.shape[1]-1)))
     
     return data
-
-def train_val_partition(data,test_size):
-    """ Partitions data into two partitions named tain and val
-           
-        Args:
-            data (DataFrame): Containig the data samples and its correspondant labels
-            
-        Returns:
-            X_train (DataFrame): Data samples of train partition
-            X_val (DataFrame): Data samples of val partition
-            y_train (Series): Labels of train partition
-            y_val (Series): Labels of val partition
-    """
-    X = data.iloc[:,1:]
-    y = data.iloc[:,1]
-    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=test_size, random_state=1)
-    
-    return X_train, X_val, y_train, y_val
 
 def check_null(data):
     """ Check if there is NaN values in the data

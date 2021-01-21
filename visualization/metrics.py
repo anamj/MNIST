@@ -5,7 +5,7 @@ Created on Fri Jan 15 15:05:01 2021
 @author: Ana Mantecon
 Metrics definition
 """
-
+import logging
 import pandas as pd
 import numpy as np
 
@@ -24,7 +24,7 @@ def accuracy(eval_out):
     
     accuracy = 100*correct/total
     
-    print('Total Accuracy is '+'{0:.2f}%'.format(accuracy))
+    logging.info('Total Accuracy is '+'{0:.2f}%'.format(accuracy))
     
     return accuracy
 
@@ -43,7 +43,7 @@ def error_rate(eval_out):
     
     error_rate = 100*errors/total
     
-    print('Total Error Rate is '+'{0:.2f}%'.format(error_rate))
+    logging.info('Total Error Rate is '+'{0:.2f}%'.format(error_rate))
     
     return error_rate
 

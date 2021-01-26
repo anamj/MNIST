@@ -168,6 +168,7 @@ def train_wraper(train_dataloader, val_dataloader, config):
         if is_best:
             logging.info("- Found new best accuracy")
             best_val = val_acc[epoch]
+            best_epoch = epoch
         
         # early_stopping - uses validation loss to check if it has decresed
         early_stopping(val_loss[epoch], model)
@@ -183,5 +184,5 @@ def train_wraper(train_dataloader, val_dataloader, config):
     
     if config.CNN_train['num_epochs'] > 0:
         #Plot training vs validaton performance per epoch
-        plot_train_val(train_loss, val_loss, out_dir, 'loss','CNN')
-        plot_train_val(train_acc, val_acc, out_dir, 'accuracy','CNN')
+        plot_train_val(train_loss, val_loss, out_dir, best_epoch, 'loss','CNN')
+        plot_train_val(train_acc, val_acc, out_dir, best_epoch, 'accuracy','CNN')

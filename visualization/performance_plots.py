@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 
-def plot_train_val(train_metric, val_metric, save_dir, metric_name, model_name, text_points=False):
+def plot_train_val(train_metric, val_metric, save_dir, best_epoch, metric_name, model_name, text_points=False):
     """ Plots training and validation performance metrics against the number of
         epochs in the same plot
            
@@ -18,12 +18,13 @@ def plot_train_val(train_metric, val_metric, save_dir, metric_name, model_name, 
             train_metric (list): training metric that wants to be displayed 
             val_metric (list): validation metric that wants to be displayed
             save_dir (str): output directory where the figure will be saved
+            best_epoch (int): value of the epoch at which the best model was found
             metric_name (str): metric name
             model_name (str): model name
     """
     assert len(train_metric)==len(val_metric), 'Missmatch in train and validation metric sizes. Training performace plot can not be displayed'
     
-    num_epoch = list(i for i in range(len(train_metric)))
+    num_epoch = list(i for i in range(1,len(train_metric)+1)) #Epoch count start in 1
 
     plt.clf()
     
@@ -37,6 +38,8 @@ def plot_train_val(train_metric, val_metric, save_dir, metric_name, model_name, 
     plt.ylabel(metric_name)
     plt.title(model_name+' training performance') 
     plt.grid()
+    
+    plt.axvline(x=best_epoch+1,c='r',linewidth=1, linestyle='--')
     
     if metric_name == 'loss':
         plt.ylim([0,max(train_metric+val_metric)+0.1])

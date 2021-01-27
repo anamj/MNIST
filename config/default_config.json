@@ -10,7 +10,7 @@
     },
         
     "data_exploration":{
-        "data_to_explore": "C:\\Users\\Ana\\Documents\\Projects\\MNIST\\data\\train\\train.csv",
+        "data_to_explore": "C:\\Users\\Ana\\Documents\\Projects\\MNIST\\data\\kaggle\\train\\train.csv",
         "display_plots": 1,
         "images_to_plot": 20        
     },

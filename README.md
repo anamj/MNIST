@@ -11,13 +11,14 @@ provided by Kaggle have been used for trainig and testing, so as to participate 
 The original test partition (downloaded from torchvision) has also been used for evaluating the model
 and obtainig the confusion matrix and final performance metrics.  
 
-The kaggle database consists on:
+
+The kaggle database partition consists on:
 - Training data : 42000 samples of labelled digits
 - Test data     : 28000 samples of unlabelled digits. 
 
 The original database partition consists on:
 - Training data : 60000 samples of labelled digits
-- Test data     : 10000 samples of unlabelled digits. 
+- Test data     : 10000 samples of labelled digits. 
 
 ## CODE STRUCTURE
 

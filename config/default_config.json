@@ -1,6 +1,6 @@
 {
     "general":{
-        "seed" : 20,
+        "seed" : 18,
         "out_dir": "C:\\Users\\Ana\\Documents\\Projects\\MNIST\\results\\experiment0",
         "pre_model": ""
     },
